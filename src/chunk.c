@@ -31,8 +31,8 @@ static char mHighLowText[36];
 static GBitmap *mWeatherIcon;
 
 //static GFont *mDateFont;
-static GFont *mTimeFont;
-static GFont *mTemperatureFont;   
+static GFont mTimeFont;
+static GFont mTemperatureFont;   
 //static GFont *mHighLowFont;
 
 static int mTimerMinute = 0;
@@ -285,7 +285,7 @@ void weather_set_temperature(int16_t t) {
 }
 
 void weather_set_loading() {
-	snprintf(mHighLowText, sizeof(mHighLowText), "%s", "CHUNK v2.0"); //"LOW 999\u00B0 HIGH 999\u00B0"); //
+	snprintf(mHighLowText, sizeof(mHighLowText), "%s", "GAT v2.0"); //"LOW 999\u00B0 HIGH 999\u00B0"); //
 	text_layer_set_text(mHighLowLayer, mHighLowText);
 	weather_set_icon(48);  
 	weather_set_temperature(999);
@@ -325,7 +325,7 @@ static void handle_tick(struct tm *tick_time, TimeUnits units_changed) {
 
   if (units_changed & DAY_UNIT) {
   
-		char *sys_locale = setlocale(LC_ALL, "");
+		char *sys_locale = setlocale(LC_ALL, "it_IT");
 		
 //		APP_LOG(APP_LOG_LEVEL_DEBUG, "%s", sys_locale);
 		

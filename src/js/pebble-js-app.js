@@ -29,9 +29,10 @@ function fetchWeather(latitude, longitude) {
   //console.log("Fetch Weather");
   var response;
   var req = new XMLHttpRequest();
-  req.open('GET', "http://www.mirz.com/Chunk2/Yahoo.php?" +
-    "lat=" + latitude + "&long=" + longitude + "&v=24&units=" + UnitsToString(mConfig.units), true);
+  req.open('GET', "http://api.openweathermap.org/data/2.5/weather?" +
+    "lat=" + latitude + "&lon=" + longitude + "&units=metric&appid=4a77e5cd1a47d0e1f0675943b4a56e42", true);
   req.onload = function(e) {
+    console.log(req.responseText);
     if (req.readyState == 4) {
       if(req.status == 200) {
         //console.log(req.responseText);
@@ -39,14 +40,37 @@ function fetchWeather(latitude, longitude) {
         var temperature, high, low, code;
         if (response) {
           var weatherResult = response;
-          temperature = weatherResult.temp;
-          code = weatherResult.code;
-          high = weatherResult.high;
-          low = weatherResult.low;
-
+          temperature = weatherResult.main.temp;
+          code = weatherResult.weather[0].icon;
+          high = weatherResult.main.temp_max;
+          low = weatherResult.main.temp_min;
+          var iconToCodeMap = {
+            '01d': 32 ,//'clear_sky_day',
+            '01n': 31, //'clear_sky_night',
+            '02d': 44, //'few_clouds_day',
+            '02n': 33, //'few_clouds_night',
+            '03d': 29, //'scattered_clouds_day',
+            '03n': 30, //'scattered_clouds_night',
+            '04d': 27, // 'broken_clouds_day',
+            '04n': 28, // 'broken_clouds_night',
+            '09d': 11, // 'shower_rain_day',
+            '09n': 11, // 'shower_rain_night',
+            '10d': 10, // 'rain_day',
+            '10n': 10, //'rain_night',
+            '11d': 45, // 'thunderstorm_day',
+            '11n': 47, // 'thunderstorm_night',
+            '13d': 16, // 'snow_day',
+            '13n': 16, // 'snow_night',
+            '50d': 20, // 'mist_day',
+            '50n': 20, // 'mist_night'
+          };
+          var yahooCode = iconToCodeMap[code];
+          if (typeof(yahooCode) === 'undefined') {
+            yahooCode = 32;
+          }
           Pebble.sendAppMessageWithRetry({
             "temperature": temperature,
-            "icon": code,
+            "icon": yahooCode,
             "high": high,
             "low": low
             }, 10);
